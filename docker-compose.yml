@@ -1,0 +1,46 @@
+version: '3.1'
+
+services:
+  # Service de base de donnée mysql
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: stevy
+      MYSQL_PASSWORD: toor
+    volumes:
+      - dbvolume:/var/lib/mysql
+    networks:
+      - lamp-network
+
+  phpmyadmin:
+    image: phpmyadmin
+    links:
+      - db
+    ports:
+      - 81:80
+    environment:
+      MYSQL_USER: stevy
+      MYSQL_PASSWORD: toor
+    networks:
+      - lamp-network
+
+  webserver:
+    image: php:apache
+    links:
+      - db
+    ports:
+      - 80:80
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - lamp-network
+      
+networks:
+  lamp-network:
+    name: lamp-network
+    driver: bridge
+
+volumes:
+  dbvolume:
