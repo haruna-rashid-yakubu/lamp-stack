@@ -25,6 +25,10 @@ resource "kubernetes_deployment" "mysql" {
         container {
           name  = var.deployment_def.container_name
           image = var.deployment_def.image
+          volume_mount {
+            name = "my-pv-storage"
+            mount_path = "/var/lib/mysql"
+          }
           env {
             name = "MYSQL_ROOT_PASSWORD"
             value_from {
@@ -35,7 +39,6 @@ resource "kubernetes_deployment" "mysql" {
             }
 
           }
-
           env {
             name = "MYSQL_USER"
             value_from {
@@ -82,7 +85,14 @@ resource "kubernetes_deployment" "mysql" {
             container_port = 3306
           }
         }
+        volume {
+          name = "my-pv-storage"
+          persistent_volume_claim {
+            claim_name = "database-volume-claim"
+          }
+        }
       }
+      
     }
   }
 }

@@ -35,7 +35,7 @@ module "apache" {
 
 module "mysql" {
   source     = "./modules/mysql"
-  depends_on = [module.data]
+  depends_on = [module.data, module.storage]
 }
 
 module "php" {
@@ -43,3 +43,6 @@ module "php" {
   depends_on = [module.data, module.mysql]
 }
 
+module "storage" {
+  source     = "./modules/storage"
+}
