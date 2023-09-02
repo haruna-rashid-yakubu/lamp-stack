@@ -9,24 +9,24 @@ variable "deployment_def" {
     container_name = string
   })
   default = {
-    container_name = "mysql"
+    container_name = "mysql-database"
     labels = {
       app     = "database"
       creator = "rashid"
     }
     image = "mysql"
-    name  = "mysql"
+    name  = "mysql-database"
   }
 }
 
 
 variable "service_def" {
   type = object({
-    name      = string
-    type      = string
+    name = string
+    type = string
   })
   default = {
-    name = "mysql"
+    name = "mysql-database"
     type = "ClusterIP"
   }
 }

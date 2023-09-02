@@ -10,6 +10,9 @@ terraform {
   }
 }
 
+locals {
+  namespace = "lamp-stack"
+}
 
 provider "kubernetes" {
   config_path = "~/.kube/config"

@@ -1,10 +1,11 @@
 locals {
-  namespace = "lamp-stack"
+  namespace   = "lamp-stack"
+  secret_name = "database-secret"
 }
 
-resource "kubernetes_deployment" "apache" {
+resource "kubernetes_deployment" "phpmyadminapache" {
   metadata {
-    name      = "apache-deployment"
+    name      = "phpmyadminapache-deployment"
     namespace = local.namespace
   }
   spec {
@@ -20,6 +21,38 @@ resource "kubernetes_deployment" "apache" {
         container {
           name  = var.deployment_def.name
           image = var.deployment_def.image
+
+           env {
+            name = "PMA_USER"
+            value_from {
+              secret_key_ref {
+                name = local.secret_name
+                key  = "mysql_user"
+              }
+            }
+
+          }
+
+          env {
+            name = "PMA_PASSWORD"
+            value_from {
+              secret_key_ref {
+                name = local.secret_name
+                key  = "mysql_password"
+              }
+            }
+
+          }
+
+          env {
+            name  = "PMA_PORT"
+            value = "3306"
+          }
+          env {
+            name  = "PMA_HOST"
+            value = "mysql-database"
+          }
+
           port {
             container_port = 80
           }
@@ -29,8 +62,8 @@ resource "kubernetes_deployment" "apache" {
   }
 }
 
-resource "kubernetes_service" "apache" {
-  depends_on = [kubernetes_deployment.apache]
+resource "kubernetes_service" "phpmyadminapache" {
+  depends_on = [kubernetes_deployment.phpmyadminapache]
   metadata {
     name      = var.service_def.name
     namespace = local.namespace
